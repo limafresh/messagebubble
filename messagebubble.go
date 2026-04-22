@@ -70,7 +70,7 @@ func (l *bubbleLayout) MinSize(objects []fyne.CanvasObject) fyne.Size {
 	return objects[0].MinSize()
 }
 
-type messageBubble struct {
+type MessageBubble struct {
 	widget.BaseWidget
 	rect         *canvas.Rectangle
 	timeLabel    *canvas.Text
@@ -81,24 +81,27 @@ type messageBubble struct {
 	msgTime      string
 	isMine       bool
 	bubbleColors *BubbleColors
+
+	CornerRadius float32
 }
 
-func NewMessageBubble(sender, text, msgTime string, isMine bool, bubbleColors *BubbleColors) fyne.CanvasObject {
-	b := &messageBubble{
+func NewMessageBubble(sender, text, msgTime string, isMine bool, bubbleColors *BubbleColors) *MessageBubble {
+	b := &MessageBubble{
 		sender:       sender,
 		text:         text,
 		msgTime:      msgTime,
 		isMine:       isMine,
 		bubbleColors: bubbleColors,
+		CornerRadius: 12,
 	}
 	b.ExtendBaseWidget(b)
 
-	return container.New(&bubbleLayout{alignRight: isMine, maxWidth: 300, text: text}, b)
+	return b
 }
 
-func (b *messageBubble) CreateRenderer() fyne.WidgetRenderer {
+func (b *MessageBubble) CreateRenderer() fyne.WidgetRenderer {
 	b.rect = canvas.NewRectangle(color.Transparent)
-	b.rect.CornerRadius = 12
+	b.rect.CornerRadius = b.CornerRadius
 
 	messageLabel := widget.NewLabel(b.text)
 	messageLabel.Wrapping = fyne.TextWrapWord
@@ -123,20 +126,26 @@ func (b *messageBubble) CreateRenderer() fyne.WidgetRenderer {
 	b.labelTheme = &CustomLabelTheme{Theme: theme.DefaultTheme(), labelColor: color.Transparent}
 	b.override = container.NewThemeOverride(contentWrapper, b.labelTheme)
 
+	cont := container.New(&bubbleLayout{alignRight: b.isMine, maxWidth: 300, text: b.text}, b.override)
+
 	b.Refresh()
 
-	return widget.NewSimpleRenderer(b.override)
+	return widget.NewSimpleRenderer(cont)
 }
 
-func (b *messageBubble) Refresh() {
+func (b *MessageBubble) Refresh() {
 	b.rect.FillColor = b.getColor(b.bubbleColors.Bubble)
 	b.labelTheme.labelColor = b.getColor(b.bubbleColors.Text)
 	b.timeLabel.Color = b.getColor(b.bubbleColors.Time)
 
+	if b.rect.CornerRadius != b.CornerRadius {
+		b.rect.CornerRadius = b.CornerRadius
+	}
+
 	b.override.Refresh()
 }
 
-func (b *messageBubble) getColor(colors ColorSet) color.NRGBA {
+func (b *MessageBubble) getColor(colors ColorSet) color.NRGBA {
 	bg := fyne.CurrentApp().Settings().Theme().Color(theme.ColorNameBackground, theme.VariantLight)
 	if isDark(bg) {
 		if b.isMine {

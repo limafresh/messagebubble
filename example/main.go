@@ -6,6 +6,8 @@ import (
 	"fyne.io/fyne/v2"
 	"fyne.io/fyne/v2/app"
 	"fyne.io/fyne/v2/container"
+	"fyne.io/fyne/v2/widget"
+	"fyne.io/fyne/v2/theme"
 
 	"github.com/limafresh/messagebubble"
 )
@@ -28,6 +30,16 @@ func main() {
 			Other: []color.NRGBA{{51, 51, 51, 255}, {230, 230, 230, 255}},
 		},
 	}
+
+	// Switch theme buttons
+	themehbox := container.NewHBox(
+		widget.NewButton("Light", func() {
+			a.Settings().SetTheme(theme.LightTheme())
+		}),
+		widget.NewButton("Dark", func() {
+			a.Settings().SetTheme(theme.DarkTheme())
+		}),
+	)
 
 	// Example for use
 	dialogbox := container.NewVBox(
@@ -68,7 +80,7 @@ func main() {
 		),
 	)
 
-	w.Resize(fyne.NewSize(300, 600))
-	w.SetContent(dialogbox)
+	w.Resize(fyne.NewSize(400, 650))
+	w.SetContent(container.NewVBox(themehbox, dialogbox))
 	w.ShowAndRun()
 }

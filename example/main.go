@@ -7,7 +7,7 @@ import (
 	"fyne.io/fyne/v2/widget"
 	"fyne.io/fyne/v2/theme"
 
-	"github.com/limafresh/messagebubble"
+	"github.com/limafresh/messagebubble/v2"
 )
 
 func main() {

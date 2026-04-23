@@ -1,4 +1,4 @@
-module github.com/limafresh/messagebubble
+module github.com/limafresh/messagebubble/v2
 
 go 1.26.1
 

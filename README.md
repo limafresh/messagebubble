@@ -12,7 +12,7 @@ Modern message bubble widget for Go Fyne GUI toolkit.
 ## Install
 
 ```
-go get github.com/limafresh/messagebubble@latest
+go get github.com/limafresh/messagebubble/v2@latest
 ```
 
 ![demo](https://raw.githubusercontent.com/limafresh/messagebubble/main/demo.gif)

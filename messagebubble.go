@@ -11,11 +11,29 @@ import (
 	"fyne.io/fyne/v2/layout"
 )
 
+var (
+	DefaultColors = &Colors{
+		Bubble: ColorSet{
+			Mine: []color.NRGBA{{204, 255, 204, 255}, {0, 102, 0, 255},
+			},
+			Other: []color.NRGBA{{230, 230, 230, 255}, {38, 38, 38, 255}},
+		},
+		Text: ColorSet{
+			Mine: []color.NRGBA{{0, 0, 0, 255}, {255, 255, 255, 255}},
+			Other: []color.NRGBA{{0, 0, 0, 255}, {255, 255, 255, 255}},
+		},
+		Time: ColorSet{
+			Mine: []color.NRGBA{{51, 51, 51, 255}, {230, 230, 230, 255}},
+			Other: []color.NRGBA{{51, 51, 51, 255}, {230, 230, 230, 255}},
+		},
+	}
+)
+
 type ColorSet struct {
 	Mine, Other []color.NRGBA
 }
 
-type BubbleColors struct {
+type Colors struct {
 	Bubble, Text, Time ColorSet
 }
 
@@ -72,26 +90,27 @@ func (l *bubbleLayout) MinSize(objects []fyne.CanvasObject) fyne.Size {
 
 type MessageBubble struct {
 	widget.BaseWidget
-	rect         *canvas.Rectangle
-	timeLabel    *canvas.Text
-	labelTheme   *CustomLabelTheme
-	override     *container.ThemeOverride
+	rect       *canvas.Rectangle
+	timeLabel  *canvas.Text
+	labelTheme *CustomLabelTheme
+	override   *container.ThemeOverride
 	sender,
 	text,
-	msgTime      string
-	isMine       bool
-	bubbleColors *BubbleColors
+	msgTime    string
+	isMine     bool
 
+	Colors       *Colors
 	CornerRadius float32
 }
 
-func NewMessageBubble(sender, text, msgTime string, isMine bool, bubbleColors *BubbleColors) *MessageBubble {
+func NewMessageBubble(sender, text, msgTime string, isMine bool) *MessageBubble {
 	b := &MessageBubble{
-		sender:       sender,
-		text:         text,
-		msgTime:      msgTime,
-		isMine:       isMine,
-		bubbleColors: bubbleColors,
+		sender:  sender,
+		text:    text,
+		msgTime: msgTime,
+		isMine:  isMine,
+
+		Colors:       DefaultColors,
 		CornerRadius: 12,
 	}
 	b.ExtendBaseWidget(b)
@@ -134,9 +153,9 @@ func (b *MessageBubble) CreateRenderer() fyne.WidgetRenderer {
 }
 
 func (b *MessageBubble) Refresh() {
-	b.rect.FillColor = b.getColor(b.bubbleColors.Bubble)
-	b.labelTheme.labelColor = b.getColor(b.bubbleColors.Text)
-	b.timeLabel.Color = b.getColor(b.bubbleColors.Time)
+	b.rect.FillColor = b.getColor(b.Colors.Bubble)
+	b.labelTheme.labelColor = b.getColor(b.Colors.Text)
+	b.timeLabel.Color = b.getColor(b.Colors.Time)
 
 	if b.rect.CornerRadius != b.CornerRadius {
 		b.rect.CornerRadius = b.CornerRadius

@@ -51,6 +51,12 @@ bubble.Colors.Bubble.Mine = []color.NRGBA{
 bubble.CornerRadius = 16
 ```
 
+### Hide sender label (in messages not mine)
+
+```go
+bubble.HideSender = true
+```
+
 ## Customization bubbles in container
 
 For example, let's change `CornerRadius` of all bubbles in `vbox`:

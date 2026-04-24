@@ -13,14 +13,14 @@ import (
 
 const (
 	DefaultCornerRadius = 12
+	DefaultTimeSize     = 12
 	DefaultMaxWidth     = 300
 )
 
 var (
 	DefaultColors = &Colors{
 		Bubble: ColorSet{
-			Mine: []color.NRGBA{{204, 255, 204, 255}, {0, 102, 0, 255},
-			},
+			Mine: []color.NRGBA{{204, 255, 204, 255}, {0, 102, 0, 255}},
 			Other: []color.NRGBA{{230, 230, 230, 255}, {38, 38, 38, 255}},
 		},
 		Text: ColorSet{
@@ -114,6 +114,7 @@ type MessageBubble struct {
 
 	Colors       *Colors
 	CornerRadius float32
+	TimeSize     float32
 	HideSender   bool
 	HideTime     bool
 }
@@ -127,6 +128,7 @@ func NewMessageBubble(sender, text, msgTime string, isMine bool) *MessageBubble 
 
 		Colors:       DefaultColors,
 		CornerRadius: DefaultCornerRadius,
+		TimeSize:     DefaultTimeSize,
 	}
 	b.ExtendBaseWidget(b)
 
@@ -145,7 +147,7 @@ func (b *MessageBubble) CreateRenderer() fyne.WidgetRenderer {
 
 	b.timeLabel = canvas.NewText(b.msgTime, color.Transparent)
 	b.timeLabel.Alignment = fyne.TextAlignTrailing
-	b.timeLabel.TextSize = 12
+	b.timeLabel.TextSize = b.TimeSize
 	b.timeLabelWrapper = container.New(layout.NewPaddedLayout(), b.timeLabel)
 
 	bubbleContent := container.NewVBox(b.senderLabel, messageLabel, b.timeLabelWrapper)
@@ -176,20 +178,15 @@ func (b *MessageBubble) Refresh() {
 	b.labelTheme.labelColor = b.getColor(b.Colors.Text)
 	b.timeLabel.Color = b.getColor(b.Colors.Time)
 
-	// Update corner radius
-	if b.rect.CornerRadius != b.CornerRadius {
-		b.rect.CornerRadius = b.CornerRadius
-	}
+	// Update variables
+	b.rect.CornerRadius = b.CornerRadius
+	b.timeLabel.TextSize = b.TimeSize
 
 	// Update sender label visibility
-	if b.HideSender {
+	if b.HideSender || b.isMine {
 		b.senderLabel.Hide()
 	} else {
-		if b.isMine {
-			b.senderLabel.Hide()
-		} else {
-			b.senderLabel.Show()
-		}
+		b.senderLabel.Show()
 	}
 
 	// Update time label visibility

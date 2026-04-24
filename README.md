@@ -32,8 +32,6 @@ bubble := messagebubble.NewMessageBubble(
 
 ## Customization
 
-If the widget has already been rendered, you need to call `name.Refresh()` after customization, where `name` is the name of the widget or container in which it resides.
-
 ### Colors
 
 ```go
@@ -45,25 +43,29 @@ bubble.Colors.Bubble.Mine = []color.NRGBA{
 
 **Available:** *Bubble.Mine*, *Bubble.Other*, *Text.Mine*, *Text.Other*, *Time.Mine*, *Time.Other*.
 
-### Corner radius
+### Fields
+
+| Field | Value | Description |
+|----------|-------|-------------|
+| `Colors` | *\*messagebubble.Colors* | Bubble colors |
+| `CornerRadius` | *float32* | The radius of the bubble's corners |
+| `TimeSize` | *float32* | The size of the time label |
+| `HideSender` | *bool* | Whether to hide the sender label (in messages not mine) |
+| `HideTime` | *bool* | Whether to hide the time label |
+
+Example:
 
 ```go
 bubble.CornerRadius = 16
+bubble.TimeSize = 10
 ```
 
-### Hide sender label (in messages not mine)
+### Constants
+- `DefaultCornerRadius`
+- `DefaultTimeSize`
+- `DefaultMaxWidth`
 
-```go
-bubble.HideSender = true
-```
-
-### Hide time label
-
-```go
-bubble.HideTime = true
-```
-
-## Customization bubbles in container
+## Customization of bubbles in a container
 
 For example, let's change `CornerRadius` of all bubbles in `vbox`:
 

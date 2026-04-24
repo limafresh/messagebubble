@@ -1,6 +1,7 @@
 package messagebubble
 
 import (
+	"math"
 	"image/color"
 
 	"fyne.io/fyne/v2"
@@ -71,19 +72,10 @@ func (l *bubbleLayout) Layout(objects []fyne.CanvasObject, size fyne.Size) {
 	textSize := fyne.MeasureText(l.text, theme.TextSize(), fyne.TextStyle{})
 	totalWidth := objSize.Width + float32(textSize.Width)
 
-	var width float32
-
 	// Determine the width of the bubble based on content and maximum allowed width
-	if totalWidth < l.maxWidth {
-		width = totalWidth
-	} else {
-		width = l.maxWidth
-	}
-
+	width := float32(math.Min(float64(totalWidth), float64(l.maxWidth)))
 	// Set width to 80% of available width if it exceeds the container size
-	if width > size.Width {
-		width = size.Width * 0.8
-	}
+	width = float32(math.Min(float64(width), float64(size.Width*0.8)))
 
 	// Resize the bubble
 	obj.Resize(fyne.NewSize(width, obj.MinSize().Height))
@@ -178,7 +170,7 @@ func (b *MessageBubble) Refresh() {
 	b.labelTheme.labelColor = b.getColor(b.Colors.Text)
 	b.timeLabel.Color = b.getColor(b.Colors.Time)
 
-	// Update variables
+	// Update field values
 	b.rect.CornerRadius = b.CornerRadius
 	b.timeLabel.TextSize = b.TimeSize
 

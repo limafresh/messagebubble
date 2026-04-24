@@ -57,6 +57,12 @@ bubble.CornerRadius = 16
 bubble.HideSender = true
 ```
 
+### Hide time label
+
+```go
+bubble.HideTime = true
+```
+
 ## Customization bubbles in container
 
 For example, let's change `CornerRadius` of all bubbles in `vbox`:

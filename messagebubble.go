@@ -42,13 +42,13 @@ type Colors struct {
 	Bubble, Text, Time ColorSet
 }
 
-// CustomLabelTheme overrides the default theme to apply custom text color
-type CustomLabelTheme struct {
+// customLabelTheme overrides the default theme to apply custom text color
+type customLabelTheme struct {
 	fyne.Theme
 	labelColor color.Color
 }
 
-func (t *CustomLabelTheme) Color(name fyne.ThemeColorName, variant fyne.ThemeVariant) color.Color {
+func (t *customLabelTheme) Color(name fyne.ThemeColorName, variant fyne.ThemeVariant) color.Color {
 	if name == theme.ColorNameForeground {
 		return t.labelColor
 	}
@@ -101,19 +101,21 @@ func (l *bubbleLayout) MinSize(objects []fyne.CanvasObject) fyne.Size {
 
 type MessageBubble struct {
 	widget.BaseWidget
-	rect        *canvas.Rectangle
-	senderLabel fyne.CanvasObject
-	timeLabel   *canvas.Text
-	labelTheme  *CustomLabelTheme
-	override    *container.ThemeOverride
-	sender,
-	text,
-	msgTime     string
-	isMine      bool
+	rect             *canvas.Rectangle
+	senderLabel      fyne.CanvasObject
+	timeLabel        *canvas.Text
+	timeLabelWrapper fyne.CanvasObject
+	labelTheme       *customLabelTheme
+	override         *container.ThemeOverride
+	sender           string
+	text             string
+	msgTime          string
+	isMine           bool
 
 	Colors       *Colors
 	CornerRadius float32
 	HideSender   bool
+	HideTime     bool
 }
 
 func NewMessageBubble(sender, text, msgTime string, isMine bool) *MessageBubble {
@@ -144,14 +146,14 @@ func (b *MessageBubble) CreateRenderer() fyne.WidgetRenderer {
 	b.timeLabel = canvas.NewText(b.msgTime, color.Transparent)
 	b.timeLabel.Alignment = fyne.TextAlignTrailing
 	b.timeLabel.TextSize = 12
-	timeLabelWrapper := container.New(layout.NewPaddedLayout(), b.timeLabel)
+	b.timeLabelWrapper = container.New(layout.NewPaddedLayout(), b.timeLabel)
 
-	bubbleContent := container.NewVBox(b.senderLabel, messageLabel, timeLabelWrapper)
+	bubbleContent := container.NewVBox(b.senderLabel, messageLabel, b.timeLabelWrapper)
 
 	content := container.NewMax(b.rect, bubbleContent)
 	contentWrapper := container.New(layout.NewPaddedLayout(), content)
 
-	b.labelTheme = &CustomLabelTheme{Theme: theme.DefaultTheme(), labelColor: color.Transparent}
+	b.labelTheme = &customLabelTheme{Theme: theme.DefaultTheme(), labelColor: color.Transparent}
 	b.override = container.NewThemeOverride(contentWrapper, b.labelTheme)
 
 	cont := container.New(
@@ -188,6 +190,13 @@ func (b *MessageBubble) Refresh() {
 		} else {
 			b.senderLabel.Show()
 		}
+	}
+
+	// Update time label visibility
+	if b.HideTime {
+		b.timeLabelWrapper.Hide()
+	} else {
+		b.timeLabelWrapper.Show()
 	}
 
 	b.override.Refresh()

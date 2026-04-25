@@ -129,7 +129,6 @@ func NewMessageBubble(sender, text, msgTime string, isMine bool) *MessageBubble 
 
 func (b *MessageBubble) CreateRenderer() fyne.WidgetRenderer {
 	b.rect = canvas.NewRectangle(color.Transparent)
-	b.rect.CornerRadius = b.CornerRadius
 
 	b.senderLabel = widget.NewLabelWithStyle(b.sender, fyne.TextAlignLeading, fyne.TextStyle{Bold: true})
 
@@ -139,7 +138,6 @@ func (b *MessageBubble) CreateRenderer() fyne.WidgetRenderer {
 
 	b.timeLabel = canvas.NewText(b.msgTime, color.Transparent)
 	b.timeLabel.Alignment = fyne.TextAlignTrailing
-	b.timeLabel.TextSize = b.TimeSize
 	b.timeLabelWrapper = container.New(layout.NewPaddedLayout(), b.timeLabel)
 
 	bubbleContent := container.NewVBox(b.senderLabel, messageLabel, b.timeLabelWrapper)

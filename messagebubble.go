@@ -99,6 +99,7 @@ type MessageBubble struct {
 	timeLabelWrapper fyne.CanvasObject
 	labelTheme       *customLabelTheme
 	override         *container.ThemeOverride
+	layout           *bubbleLayout
 	sender           string
 	text             string
 	msgTime          string
@@ -107,6 +108,7 @@ type MessageBubble struct {
 	Colors       *Colors
 	CornerRadius float32
 	TimeSize     float32
+	MaxWidth     float32
 	HideSender   bool
 	HideTime     bool
 }
@@ -121,6 +123,7 @@ func NewMessageBubble(sender, text, msgTime string, isMine bool) *MessageBubble 
 		Colors:       DefaultColors,
 		CornerRadius: DefaultCornerRadius,
 		TimeSize:     DefaultTimeSize,
+		MaxWidth:     DefaultMaxWidth,
 	}
 	b.ExtendBaseWidget(b)
 
@@ -142,16 +145,18 @@ func (b *MessageBubble) CreateRenderer() fyne.WidgetRenderer {
 
 	bubbleContent := container.NewVBox(b.senderLabel, messageLabel, b.timeLabelWrapper)
 
-	content := container.NewMax(b.rect, bubbleContent)
+	content := container.NewStack(b.rect, bubbleContent)
 	contentWrapper := container.New(layout.NewPaddedLayout(), content)
 
 	b.labelTheme = &customLabelTheme{Theme: theme.DefaultTheme(), labelColor: color.Transparent}
 	b.override = container.NewThemeOverride(contentWrapper, b.labelTheme)
 
-	cont := container.New(
-		&bubbleLayout{alignRight: b.isMine, maxWidth: DefaultMaxWidth, text: b.text},
-		b.override,
-	)
+	b.layout = &bubbleLayout{
+		alignRight: b.isMine,
+		text: b.text,
+	}
+
+	cont := container.New(b.layout, b.override)
 
 	b.Refresh()
 
@@ -171,6 +176,7 @@ func (b *MessageBubble) Refresh() {
 	// Update field values
 	b.rect.CornerRadius = b.CornerRadius
 	b.timeLabel.TextSize = b.TimeSize
+	b.layout.maxWidth = b.MaxWidth
 
 	// Update sender label visibility
 	if b.HideSender || b.isMine {

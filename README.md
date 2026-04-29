@@ -50,6 +50,7 @@ bubble.Colors.Bubble.Mine = []color.NRGBA{
 | `Colors` | *\*messagebubble.Colors* | Bubble colors |
 | `CornerRadius` | *float32* | The radius of the bubble's corners |
 | `TimeSize` | *float32* | The size of the time label |
+| `MaxWidth` | *float32* | The maximum width of the bubble |
 | `HideSender` | *bool* | Whether to hide the sender label (in messages not mine) |
 | `HideTime` | *bool* | Whether to hide the time label |
 
@@ -57,7 +58,7 @@ Example:
 
 ```go
 bubble.CornerRadius = 16
-bubble.TimeSize = 10
+bubble.HideTime = true
 ```
 
 ### Constants
